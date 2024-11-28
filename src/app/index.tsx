@@ -7,10 +7,10 @@ import "../styles/global.css";
 const App = () => {
   return (
     <View className="flex-1 items-center justify-center bg-green-200">
-      <Text className="font-arial_bold">Test</Text>
+      <Text className="text-3xl font-arial_bold">Test</Text>
       <StatusBar style="auto" />
-      <Link href="/profile" className="color-secondary-blue">
-        Go to Profile
+      <Link href="/home" className="color-secondary-blue">
+        Go to Home
       </Link>
     </View>
   );
