@@ -11,12 +11,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.andriizakharenko.test"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.andriizakharenko.test"
     },
     "web": {
       "bundler": "metro"
@@ -24,6 +26,20 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7ef1fa90-bd01-4674-9beb-51afe0efc88e"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7ef1fa90-bd01-4674-9beb-51afe0efc88e"
+    }
   }
 }
