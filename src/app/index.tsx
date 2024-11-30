@@ -8,9 +8,13 @@ import { Redirect, router } from "expo-router";
 
 import CustomButton from "../components/CustomButton";
 import "../styles/global.css";
-
+// import { useGlobalContext } from "../context/GlobalProvider";
 
 const App = () => {
+  // const { isLoading, isLoggedIn } = useGlobalContext();
+
+  // if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
+
   return (
     <SafeAreaView className="bg-primary-black h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -48,12 +52,12 @@ const App = () => {
 
           <CustomButton
             title="Continue with Email"
-            handlePress={() => router.push('sign-in')}
+            handlePress={() => router.push("sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>
       </ScrollView>
-      <StatusBar backgroundColor="#161622" style="light"/>
+      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 };

@@ -1,4 +1,11 @@
-import { Account, Avatars, Client, Databases, ID } from "react-native-appwrite";
+import {
+  Account,
+  Avatars,
+  Client,
+  Databases,
+  ID,
+  Query,
+} from "react-native-appwrite";
 
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -74,7 +81,6 @@ export const signIn = async (
   email: string,
   password: string
 ): Promise<Object> => {
-
   try {
     const activeSession = await account.get();
     console.log("Active session found:", activeSession);
@@ -88,6 +94,25 @@ export const signIn = async (
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Sign-in failed.";
+    throw new Error(errorMessage);
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const currentAccount = await account.get();
+    if (!currentAccount) throw new Error();
+    const currentUser = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", currentAccount.$id)]
+    );
+
+    if(!currentUser) throw new Error
+    return currentUser.documents[0]
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems getting current user";
     throw new Error(errorMessage);
   }
 };
