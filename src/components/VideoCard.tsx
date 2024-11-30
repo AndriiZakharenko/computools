@@ -1,13 +1,14 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { icons } from "../constans";
+import { ResizeMode, Video } from "expo-av";
 
 type Creator = {
   username: string;
   avatar: string;
 };
 
-type Video = {
+type VideoData = {
   title: string;
   thumbnail: string;
   video: string;
@@ -15,7 +16,7 @@ type Video = {
 };
 
 type VideoCardProps = {
-  video: Video | null;
+  video: VideoData | null;
 };
 
 const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
@@ -29,7 +30,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     );
   }
 
-  const { title, thumbnail, creator } = video;
+  const { title = "Untitled", thumbnail, creator } = video;
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -62,7 +63,18 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
       </View>
 
       {play ? (
-        <Text className="color-secondary-white">Playing</Text>
+         <Video
+         source={{ uri: video.video }}
+         className="w-full h-60 rounded-xl mt-3"
+         resizeMode={ResizeMode.CONTAIN}
+         useNativeControls
+         shouldPlay
+         onPlaybackStatusUpdate={(status) => {
+          if (status.isLoaded && 'didJustFinish' in status && status.didJustFinish) {
+            setPlay(false);
+          }
+        }}
+       />
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}

@@ -125,5 +125,29 @@ export const getAllPosts = async () => {
     );
 
     return posts.documents;
-  } catch (error) {}
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Problems with getting all posts";
+    throw new Error(errorMessage);
+  }
+};
+
+export const getLatestPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+        [Query.orderDesc("$createdAt", Query.limit(7))]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Problems with getting latets posts";
+    throw new Error(errorMessage);
+  }
 };
