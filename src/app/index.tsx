@@ -8,12 +8,12 @@ import { Redirect, router } from "expo-router";
 
 import CustomButton from "../components/CustomButton";
 import "../styles/global.css";
-import { useGlobalContext } from "../context/GlobalProvider";
+// import { useGlobalContext } from "../context/GlobalProvider";
 
 const App = () => {
-  const { isLoading, isLoggedIn } = useGlobalContext();
+  // const { isLoading, isLoggedIn } = useGlobalContext();
 
-  if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
+  // if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
 
   return (
     <SafeAreaView className="bg-primary-black h-full">
