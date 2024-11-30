@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../../constans";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
-import { Link } from "expo-router";
-import { createuser } from "../../../lib/appwrite";
+import { Link, router } from "expo-router";
+import { signIn } from "../../../lib/appwrite";
+
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -16,8 +17,27 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {
-    createuser()
+  const submit = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all the fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await signIn(form.email,  form.password);
+
+      router.replace("/home");
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message);
+      } else {
+        Alert.alert("Error", "An unknown error occurred");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
