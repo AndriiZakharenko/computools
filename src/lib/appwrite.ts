@@ -108,11 +108,22 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", currentAccount.$id)]
     );
 
-    if(!currentUser) throw new Error
-    return currentUser.documents[0]
+    if (!currentUser) throw new Error();
+    return currentUser.documents[0];
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Problems getting current user";
     throw new Error(errorMessage);
   }
+};
+
+export const getAllPosts = async () => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId
+    );
+
+    return posts.documents;
+  } catch (error) {}
 };
