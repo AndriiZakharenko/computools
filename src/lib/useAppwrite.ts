@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getAllPosts } from "./appwrite";
 import { Alert } from "react-native";
 
 type AsyncFunction<T> = () => Promise<T>;

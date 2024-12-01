@@ -1,6 +1,6 @@
 ### React Native App
 
-- React native
+- React Native
 - NativeWind
 - DB (appwrite)
 - typescript
