@@ -3,4 +3,7 @@
 - React Native
 - NativeWind
 - DB (appwrite)
-- typescript
+- Typescript
+- EXPO GO
+- routing
+- useContext
