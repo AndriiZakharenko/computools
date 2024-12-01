@@ -139,7 +139,7 @@ export const getLatestPosts = async () => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-        [Query.orderDesc("$createdAt", Query.limit(7))]
+      [Query.orderDesc("$createdAt", Query.limit(7))]
     );
 
     return posts.documents;
@@ -157,7 +157,23 @@ export const searchPosts = async (query) => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-        [Query.search("title", query)]
+      [Query.search("title", query)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems with searching posts";
+    throw new Error(errorMessage);
+  }
+};
+
+export const getUserPosts = async (userId) => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("creator", userId)]
     );
 
     return posts.documents;
@@ -165,7 +181,18 @@ export const searchPosts = async (query) => {
     const errorMessage =
       error instanceof Error
         ? error.message
-        : "Problems with searching posts";
+        : "Problems with getting User posts";
+    throw new Error(errorMessage);
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems with signing out";
     throw new Error(errorMessage);
   }
 };
