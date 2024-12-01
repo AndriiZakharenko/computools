@@ -151,3 +151,21 @@ export const getLatestPosts = async () => {
     throw new Error(errorMessage);
   }
 };
+
+export const searchPosts = async (query) => {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+        [Query.search("title", query)]
+    );
+
+    return posts.documents;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Problems with searching posts";
+    throw new Error(errorMessage);
+  }
+};
