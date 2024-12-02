@@ -8,9 +8,16 @@ import { router } from "expo-router";
 interface EmptyStateProps {
   title: string;
   subtitle: string;
+  buttonText?: string;
+  handlePress?: () => void;
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({ title, subtitle }) => {
+const EmptyState: React.FC<EmptyStateProps> = ({
+  title,
+  subtitle,
+  buttonText = "Back to Explore",
+  handlePress = () => router.push("/home")
+}) => {
   return (
     <View className="justify-center items-center px-4">
       <Image
@@ -26,8 +33,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({ title, subtitle }) => {
       </Text>
 
       <CustomButton
-        title="Back to Explore"
-        handlePress={() => router.push("/home")}
+        title={buttonText}
+        handlePress={handlePress}
         containerStyles="w-full my-5"
       />
     </View>

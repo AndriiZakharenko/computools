@@ -79,6 +79,8 @@ const Profile = () => {
           <EmptyState
             title="No Files Found"
             subtitle="No video found for this search"
+            buttonText="Upload a File"
+            handlePress={() => router.push("/create")}
           />
         )}
       />
