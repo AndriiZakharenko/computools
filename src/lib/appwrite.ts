@@ -30,12 +30,6 @@ const avatars = new Avatars(client);
 const databases = new Databases(client);
 const storage = new Storage(client);
 
-export interface UserData {
-  username: string;
-  email: string;
-  password: string;
-}
-
 export interface UserDocument {
   accountId: string;
   email: string;
@@ -44,8 +38,7 @@ export interface UserDocument {
 }
 
 // Register user
-export const createUser = async (data: UserData): Promise<UserDocument> => {
-  const { email, password, username } = data;
+export const createUser = async (email: string, password: string, username: string) => {
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -81,10 +74,10 @@ export const createUser = async (data: UserData): Promise<UserDocument> => {
 };
 
 // Sign In
-export const signIn = async (
+export async function signIn (
   email: string,
   password: string
-): Promise<Object> => {
+): Promise<Object> {
   try {
     const activeSession = await account.get();
     console.log("Active session found:", activeSession);
@@ -116,21 +109,21 @@ export async function getAccount() {
 }
 
 // Get Current User
-export const getCurrentUser = async () => {
+export async function getCurrentUser () {
   try {
     const currentAccount = await getAccount();
-    if (!currentAccount) throw new Error();
+    if (!currentAccount) throw new Error;
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       [Query.equal("accountId", currentAccount.$id)]
     );
 
-    if (!currentUser) throw Error();
+    if (!currentUser) throw Error;
     return currentUser.documents[0];
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Problems getting current user";
+      error instanceof Error ? error.message : "Problems with getting current user";
     throw new Error(errorMessage);
   }
 };
@@ -294,7 +287,7 @@ export const getLatestPosts = async () => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.orderDesc("$createdAt", Query.limit(7))]
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
     );
 
     return posts.documents;

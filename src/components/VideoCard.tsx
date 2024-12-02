@@ -19,16 +19,10 @@ type VideoCardProps = {
   video: VideoData | null;
 };
 
-const VideoCard: React.FC<VideoCardProps> = ({
-  video: {
-    title,
-    thumbnail,
-    video,
-    creator: { username, avatar },
-  },
-}) => {
+const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const [play, setPlay] = useState(false);
 
+  // Handle case where video is null
   if (!video) {
     return (
       <View className="flex-col items-center px-4 mb-14">
@@ -36,6 +30,11 @@ const VideoCard: React.FC<VideoCardProps> = ({
       </View>
     );
   }
+
+  // Destructure after null check
+  const { title, thumbnail, video: videoUrl, creator } = video;
+  const username = creator?.username || "Unknown Creator";
+  const avatar = creator?.avatar || "";
 
 
   return (
