@@ -10,7 +10,7 @@ const InfoBox = ({ title, subtitle, containerStyles, titleStyles }) => {
         {title}
       </Text>
       <Text
-        className={`text-secondary-grey text-center font-arial_regular test-sm ${titleStyles}`}
+        className={`text-gray-500 text-center font-arial_regular test-sm ${titleStyles}`}
       >
         {subtitle}
       </Text>
