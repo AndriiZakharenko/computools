@@ -9,6 +9,11 @@
   import { getCurrentUser, signIn } from "../../lib/appwrite";
   import { useGlobalContext } from "../../context/GlobalProvider";
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const SignIn = () => {
     const { setUser, setIsLogged } = useGlobalContext();
     const [isSubmitting, setSubmitting] = useState(false);
@@ -18,8 +23,20 @@
     });
 
     const submit = async () => {
-      if (form.email === "" || form.password === "") {
+      const { email, password } = form;
+
+      if (!email || !password) {
         Alert.alert("Error", "Please fill in all the fields");
+        return;
+      }
+  
+      if (!isValidEmail(email)) {
+        Alert.alert("Error", "Please enter a valid email address");
+        return;
+      }
+  
+      if (password.length < 8) {
+        Alert.alert("Error", "Password must be at least 8 characters long");
         return;
       }
 

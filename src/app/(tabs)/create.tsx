@@ -128,7 +128,7 @@ const Create = () => {
                 className="w-full h-64 rounded-2xl"
               />
             ) : (
-              <View className="w-full h-16 px-4 bg-primary-black rounded-2xl justify-center items-center border-2 border-yellow-100 flex-row space-x-2">
+              <View className="w-full h-16 px-4 bg-primary-black rounded-2xl justify-center items-center border border-yellow-100 flex-row space-x-2">
                 <Image
                   source={icons.upload}
                   className="w-5 h-5"
@@ -147,7 +147,7 @@ const Create = () => {
           value={form.prompt}
           placeholder="Please describe your file"
           handleChangeText={(e) => setForm({ ...form, prompt: e })}
-          otherStyles="mt-7"
+          otherStyles="mt-7 "
         />
         <CustomButton
           title="Submit & Publish"

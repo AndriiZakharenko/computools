@@ -86,7 +86,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
-          className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
+          className="w-full h-60 rounded-xl mt-3 relative justify-center items-center border border-yellow-100"
           accessibilityLabel="Play video"
         >
           <Image

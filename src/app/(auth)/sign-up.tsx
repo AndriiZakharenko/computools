@@ -9,6 +9,11 @@ import { Link, router } from "expo-router";
 import { createUser } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
+const isValidEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 const SignUp = () => {
   const { setUser, setIsLogged } = useGlobalContext();
   const [isSubmitting, setSubmitting] = useState(false);
@@ -18,9 +23,29 @@ const SignUp = () => {
     username: "",
   });
 
+  const isValidUsername = (username: string) => {
+    return username.length >= 2 && !username.startsWith(" ");
+  };
+
   const submit = async () => {
-    if (form.username === "" || form.email === "" || form.password === "") {
+    const { email, password, username } = form;
+    if (!username || !email || !password) {
       Alert.alert("Error", "Please fill in all the fields");
+      return;
+    }
+
+    if (!isValidUsername(username)) {
+      Alert.alert("Error", "Username must be at least 3 characters long and not start with a space");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert("Error", "Password must be at least 8 characters long");
       return;
     }
 
