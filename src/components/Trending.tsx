@@ -75,7 +75,7 @@ const TrendingItem: React.FC<TrendingItemProps> = ({ activeItem, item }) => {
         />
       ) : (
         <TouchableOpacity
-          className="relative justify-center items-center"
+          className="relative justify-center items-center "
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
         >
@@ -83,7 +83,7 @@ const TrendingItem: React.FC<TrendingItemProps> = ({ activeItem, item }) => {
             source={{
               uri: item.thumbnail,
             }}
-            className="w-52 h-72 rounded-[35px] my-5 overflow-hidden shadow-black"
+            className="w-52 h-72 rounded-[35px] my-5 overflow-hidden shadow-black border border-yellow-100"
             resizeMode="cover"
           />
 
