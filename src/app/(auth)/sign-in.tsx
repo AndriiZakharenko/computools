@@ -1,102 +1,103 @@
-import React, { useState } from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+  import React, { useState } from "react";
+  import { Alert, Image, ScrollView, Text, View } from "react-native";
+  import { SafeAreaView } from "react-native-safe-area-context";
 
-import { images } from "../../constans";
-import FormField from "../../components/FormField";
-import CustomButton from "../../components/CustomButton";
-import { Link, router } from "expo-router";
-import { getCurrentUser, signIn } from "../../lib/appwrite";
-import { useGlobalContext } from "../../context/GlobalProvider";
+  import { images } from "../../constans";
+  import FormField from "../../components/FormField";
+  import CustomButton from "../../components/CustomButton";
+  import { Link, router } from "expo-router";
+  import { getCurrentUser, signIn } from "../../lib/appwrite";
+  import { useGlobalContext } from "../../context/GlobalProvider";
 
-const SignIn = () => {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const SignIn = () => {
+    const { setUser, setIsLogged } = useGlobalContext();
+    const [isSubmitting, setSubmitting] = useState(false);
+    const [form, setForm] = useState({
+      email: "",
+      password: "",
+    });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const submit = async () => {
-    if (form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all the fields");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await signIn(form.email, form.password);
-
-      const result = await getCurrentUser();
-
-      setUser(result);
-      setIsLoggedIn(true);
-
-      router.replace("/home");
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Error", error.message);
-      } else {
-        Alert.alert("Error", "An unknown error occurred");
+    const submit = async () => {
+      if (form.email === "" || form.password === "") {
+        Alert.alert("Error", "Please fill in all the fields");
+        return;
       }
-    } finally {
-      setIsSubmitting(false);
-    }
+
+      setSubmitting(true);
+
+      try {
+        await signIn(form.email, form.password);
+
+        const result = await getCurrentUser();
+
+        setUser(result);
+        setIsLogged(true);
+
+        Alert.alert("Success", "User signed in successfully");
+
+        router.replace("/profile");
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert("Error", error.message);
+        } else {
+          Alert.alert("Error", "An unknown error occurred");
+        }
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    return (
+      <SafeAreaView className="bg-primary-black h-full">
+        <ScrollView>
+          <View className="w-full justify-center min-h-[83vh] px-4 my-6">
+            <Image
+              source={images.logo}
+              resizeMode="contain"
+              className="w-[115px] h-[35px]"
+            />
+            <Text className="text-2xl color-secondary-white font-arial_regular mt-10">
+              Log in to Computools
+            </Text>
+
+            <FormField
+              title="Email"
+              value={form.email}
+              handleChangeText={(e) => setForm({ ...form, email: e })}
+              otherStyles="mt-7"
+              keyboardType="email-address"
+              placeholder="e-mail"
+            />
+
+            <FormField
+              title="Password"
+              value={form.password}
+              handleChangeText={(e) => setForm({ ...form, password: e })}
+              otherStyles="mt-7"
+              placeholder="password"
+            />
+
+            <CustomButton
+              title="Sign In"
+              handlePress={submit}
+              containerStyles="mt-7"
+              isLoading={isSubmitting}
+            />
+            <View className="justify-center pt-5 flex-row gap-2">
+              <Text className="text-lg color-secondary-grey">
+                Don't have an account?
+              </Text>
+              <Link
+                href="/sign-up"
+                className="text-lg color-secondary-yellow font-arial_bold"
+              >
+                Sign Up
+              </Link>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
   };
 
-  return (
-    <SafeAreaView className="bg-primary-black h-full">
-      <ScrollView>
-        <View className="w-full justify-center min-h-[83vh] px-4 my-6">
-          <Image
-            source={images.logo}
-            resizeMode="contain"
-            className="w-[115px] h-[35px]"
-          />
-          <Text className="text-2xl color-secondary-white font-arial_regular mt-10">
-            Log in to Aora
-          </Text>
-
-          <FormField
-            title="Email"
-            value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-7"
-            keyboardType="email-address"
-            placeholder=""
-          />
-
-          <FormField
-            title="Password"
-            value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
-            placeholder=""
-          />
-
-          <CustomButton
-            title="Sign In"
-            handlePress={submit}
-            containerStyles="mt-7"
-            isLoading={isSubmitting}
-          />
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg color-secondary-grey">
-              Don't have account?
-            </Text>
-            <Link
-              href="/sign-up"
-              className="text-lg color-secondary-yellow font-arial_bold"
-            >
-              Sign Up
-            </Link>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
-export default SignIn;
+  export default SignIn;

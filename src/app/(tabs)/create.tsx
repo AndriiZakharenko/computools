@@ -12,53 +12,64 @@ import FormField from "../../components/FormField";
 import { ResizeMode, Video } from "expo-av";
 import { icons } from "../../constans";
 import CustomButton from "../../components/CustomButton";
-import * as ImagePicker from "expo-image-picker";
+import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
-import { createVideo } from "../../lib/appwrite";
+import { createVideoPost } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
+
+type FormState = {
+  title: string;
+  video: DocumentPicker.DocumentResult | null;
+  thumbnail: DocumentPicker.DocumentResult | null;
+  prompt: string;
+};
 
 const Create = () => {
   const { user } = useGlobalContext();
   const [uploading, setUploading] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     title: "",
     video: null,
     thumbnail: null,
     prompt: "",
   });
 
-  const openPicker = async (selectType) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: selectType === 'image' ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
-      aspect: [4, 3],
-      quality: 1,
+  const openPicker = async (selectType: "image" | "video") => {
+    const result = await DocumentPicker.getDocumentAsync({
+      type:
+        selectType === "image"
+          ? ["image/png", "image/jpg"]
+          : ["video/mp4", "video/gif"],
     });
 
-    if (!result.canceled) {
-      if (selectType === "image") {
-        setForm({ ...form, thumbnail: result.assets[0] });
-      }
-      if (selectType === "video") {
-        setForm({ ...form, video: result.assets[0] });
-      }
+    if (!result.canceled && "assets" in result) {
+      const asset = result.assets[0];
+      setForm({
+        ...form,
+        [selectType === "image" ? "thumbnail" : "video"]: asset,
+      });
+    } else {
+      Alert.alert("Document picked", JSON.stringify(result, null, 2));
     }
   };
 
   const submit = async () => {
-    if (!form.prompt || !form.title || !form.thumbnail || !form.video) {
+    if (!form.title || !form.prompt || !form.thumbnail || !form.video) {
       return Alert.alert("Please fill in all the fields");
     }
+
     setUploading(true);
     try {
-      await createVideo({
+      await createVideoPost({
         ...form,
         userId: user.$id,
       });
 
-      Alert.alert("Succes", "Post uploaded succesfully");
+      Alert.alert("Success", "Post uploaded successfully");
       router.push("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
+    } catch (error: unknown) {
+      const errorMessage = (error as Error).message || "An unknown error occurred";
+      Alert.alert("Error", errorMessage);
     } finally {
       setForm({
         title: "",
@@ -78,26 +89,29 @@ const Create = () => {
         <FormField
           title="Video Title"
           value={form.title}
-          placeholder="Give your video a catch title...."
+          placeholder="Give your file a catch title...."
           handleChangeText={(e) => setForm({ ...form, title: e })}
           otherStyles="mt-10"
         />
 
-        <View className="mt-7 space-y-2">
+        <View className="mt-7 space-y-2 " >
           <Text className=" color-secondary-grey">Upload file</Text>
           <TouchableOpacity onPress={() => openPicker("video")}>
-            {form.video ? (
+            {form.video && "uri" in form.video ? (
               <Video
                 source={{ uri: form.video.uri }}
-                className="w-full h-64 rounded-2xl"
+                className="w-full h-64 rounded-2xl "
+                useNativeControls
                 resizeMode={ResizeMode.COVER}
+                isLooping
               />
             ) : (
-              <View className="w-full h-40 px-4 bg-primary-black rounded-2xl justify-center items-center">
-                <View className="w-14 h-14 border border-dashed border-secondary-grey justify-center items-center">
+              <View className="w-full h-40 px-4 bg-primary-black rounded-2xl justify-center items-center border border-yellow-100">
+                <View className="w-14 h-14 border border-dashed border-yellow-100 justify-center items-center">
                   <Image
                     source={icons.upload}
                     className="w-1/2 h-1/2"
+                    alt="upload"
                     resizeMode="contain"
                   />
                 </View>
@@ -105,24 +119,25 @@ const Create = () => {
             )}
           </TouchableOpacity>
         </View>
+
         <View className="mt-7 space-y-2">
           <Text className=" color-secondary-grey">Thumbnail Image</Text>
-          <TouchableOpacity onPress={() => openPicker("thumbnail")}>
-            {form.thumbnail ? (
+          <TouchableOpacity onPress={() => openPicker("image")}>
+            {form.thumbnail && "uri" in form.thumbnail ? (
               <Image
                 source={{ uri: form.thumbnail.uri }}
                 resizeMode="cover"
                 className="w-full h-64 rounded-2xl"
               />
             ) : (
-              <View className="w-full h-16 px-4 bg-primary-black rounded-2xl justify-center items-center border-2 border-secondary-grey flex-row space-x-2">
+              <View className="w-full h-16 px-4 bg-primary-black rounded-2xl justify-center items-center border-2 border-yellow-100 flex-row space-x-2">
                 <Image
                   source={icons.upload}
                   className="w-5 h-5"
                   resizeMode="contain"
                 />
                 <Text className="text-sm color-secondary-grey">
-                  Choose File
+                  Choose a File
                 </Text>
               </View>
             )}
@@ -130,9 +145,9 @@ const Create = () => {
         </View>
 
         <FormField
-          title="AI prompt"
+          title="Desription"
           value={form.prompt}
-          placeholder="The promt you used to create this video"
+          placeholder="Please describe your file"
           handleChangeText={(e) => setForm({ ...form, prompt: e })}
           otherStyles="mt-7"
         />

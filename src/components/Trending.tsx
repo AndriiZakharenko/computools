@@ -63,7 +63,11 @@ const TrendingItem: React.FC<TrendingItemProps> = ({ activeItem, item }) => {
           useNativeControls
           shouldPlay
           onPlaybackStatusUpdate={(status) => {
-            if (status.isLoaded && 'didJustFinish' in status && status.didJustFinish) {
+            if (
+              status.isLoaded &&
+              "didJustFinish" in status &&
+              status.didJustFinish
+            ) {
               setPlay(false);
             }
           }}
@@ -115,16 +119,16 @@ const Trending: React.FC<TrendingProps> = ({ posts }) => {
   return (
     <FlatList
       data={posts}
+      horizontal
       keyExtractor={(item) => item.$id}
       renderItem={({ item }) => (
         <TrendingItem activeItem={activeItem} item={item} />
       )}
-      onViewableItemsChanged={({ viewableItems }) =>
-        viewableItemsChanged({ viewableItems })
-      }
-      viewabilityConfig={{ itemVisiblePercentThreshold: 70 }}
+      onViewableItemsChanged={viewableItemsChanged}
+      viewabilityConfig={{
+        itemVisiblePercentThreshold: 70,
+      }}
       contentOffset={{ x: 170, y: 0 }}
-      horizontal
     />
   );
 };

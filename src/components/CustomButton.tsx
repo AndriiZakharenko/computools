@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import React from "react";
 
 interface CustomButtonProps {
@@ -28,6 +28,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       <Text className={`color-primary-black font-arial_bold text-lg ${textStyles}`}>
         {title}
       </Text>
+
+      {isLoading && (
+        <ActivityIndicator
+          animating={isLoading}
+          color="#fff"
+          size="small"
+          className="ml-2"
+        />
+      )}
     </TouchableOpacity>
   );
 };

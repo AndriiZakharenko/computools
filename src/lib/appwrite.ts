@@ -13,8 +13,8 @@ export const appwriteConfig = {
   platform: "com.test.computools",
   projectId: "6749c26000228f3e9aa5",
   databaseId: "6749c7cb00306f636a37",
-  userCollectionId: "6749c8340010b29b9189",
-  imageCollectionId: "6749c86d0036c1b4d3ec",
+  userCollectionId: "6749c86d0036c1b4d3ec",
+  videoCollectionId: "674cf6de001e41a5598b",
   storageId: "6749d84e000f6225618e",
 };
 
@@ -43,6 +43,7 @@ export interface UserDocument {
   avatar: string;
 }
 
+// Register user
 export const createUser = async (data: UserData): Promise<UserDocument> => {
   const { email, password, username } = data;
   try {
@@ -79,6 +80,7 @@ export const createUser = async (data: UserData): Promise<UserDocument> => {
   }
 };
 
+// Sign In
 export const signIn = async (
   email: string,
   password: string
@@ -100,9 +102,23 @@ export const signIn = async (
   }
 };
 
-export const getCurrentUser = async () => {
+// Get Account
+export async function getAccount() {
   try {
     const currentAccount = await account.get();
+
+    return currentAccount;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems getting account";
+    throw new Error(errorMessage);
+  }
+}
+
+// Get Current User
+export const getCurrentUser = async () => {
+  try {
+    const currentAccount = await getAccount();
     if (!currentAccount) throw new Error();
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -110,7 +126,7 @@ export const getCurrentUser = async () => {
       [Query.equal("accountId", currentAccount.$id)]
     );
 
-    if (!currentUser) throw new Error();
+    if (!currentUser) throw Error();
     return currentUser.documents[0];
   } catch (error) {
     const errorMessage =
@@ -119,6 +135,100 @@ export const getCurrentUser = async () => {
   }
 };
 
+// Sign Out
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems with signing out";
+    throw new Error(errorMessage);
+  }
+};
+
+// Upload File
+export const uploadFile = async (file, type) => {
+  if (!file) return;
+
+  const { mimeType, ...rest } = file;
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      appwriteConfig.storageId,
+      ID.unique(),
+      asset
+    );
+
+    const filerUrl = await getFilePreview(uploadedFile.$id, type);
+    return filerUrl;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems uploading file";
+    throw new Error(errorMessage);
+  }
+};
+
+// Get File Preview
+export const getFilePreview = async (fileId, type) => {
+  let fileUrl;
+  try {
+    if (type === "video") {
+      fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId);
+    } else if (type === "image") {
+      fileUrl = storage.getFilePreview(
+        appwriteConfig.storageId,
+        fileId,
+        2000,
+        2000,
+        "top",
+        100
+      );
+    } else {
+      throw new Error("Invalid file type");
+    }
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems with getting preview";
+    throw new Error(errorMessage);
+  }
+};
+
+// Create Video Post
+export const createVideoPost = async (form) => {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail, "image"),
+      uploadFile(form.video, "video"),
+    ]);
+
+    const newPost = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.videoCollectionId,
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        prompt: form.prompt,
+        creator: form.userId,
+      }
+    );
+
+    return newPost;
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Problems uploading file";
+    throw new Error(errorMessage);
+  }
+};
+
+// Get all video Posts
 export const getAllPosts = async () => {
   try {
     const posts = await databases.listDocuments(
@@ -137,40 +247,7 @@ export const getAllPosts = async () => {
   }
 };
 
-export const getLatestPosts = async () => {
-  try {
-    const posts = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      [Query.orderDesc("$createdAt", Query.limit(7))]
-    );
-
-    return posts.documents;
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : "Problems with getting latets posts";
-    throw new Error(errorMessage);
-  }
-};
-
-export const searchPosts = async (query) => {
-  try {
-    const posts = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      [Query.search("title", query)]
-    );
-
-    return posts.documents;
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Problems with searching posts";
-    throw new Error(errorMessage);
-  }
-};
-
+// Get video posts created by user
 export const getUserPosts = async (userId) => {
   try {
     const posts = await databases.listDocuments(
@@ -192,95 +269,40 @@ export const getUserPosts = async (userId) => {
   }
 };
 
-export const signOut = async () => {
+// Get video posts that matches search query
+export const searchPosts = async (query) => {
   try {
-    const session = await account.deleteSession("current");
-    return session;
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Problems with signing out";
-    throw new Error(errorMessage);
-  }
-};
-
-export const getFilePreview = async (fileId, type) => {
-  let filerUrl;
-  try {
-    if (type === "video") {
-      filerUrl = storage.getFilePreview(storageId, fileId);
-    } else if (type === "image") {
-      filerUrl = storage.getFilePreview(
-        storageId,
-        fileId,
-        2000,
-        2000,
-        "top",
-        100
-      );
-    } else {
-      throw new Error("Invalid file type");
-    }
-
-    if (!filerUrl) throw Error;
-
-    return filerUrl;
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Problems with getting preview";
-    throw new Error(errorMessage);
-  }
-};
-
-export const uploadFile = async (file, type) => {
-  if (!file) return;
-
-  const asset = {
-    name: file.fileName,
-    type: file.mimeType,
-    size: file.fileSize,
-    uri: file.uri,
-  };
-
-  try {
-    const uploadedFile = await storage.createFile(
-      storageId,
-      ID.unique(),
-      asset
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.search("title", query)]
     );
 
-    const filerUrl = await getFilePreview(uploadedFile.$id, type);
-    return filerUrl;
+    if (!posts) throw new Error("Something went wrong");
+
+    return posts.documents;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Problems uploading file";
+      error instanceof Error ? error.message : "Problems with searching posts";
     throw new Error(errorMessage);
   }
 };
 
-export const createVideo = async (form) => {
+// Get latest created video posts
+export const getLatestPosts = async () => {
   try {
-    const [thumbnailUrl, videoUrl] = await Promise.all([
-      uploadFile(form.thumbnail, "image"),
-      uploadFile(form.video, "video"),
-    ]);
-
-    const newPost = await databases.createDocument(
-      databaseId,
-      videoCollectionId,
-      ID.unique(),
-      {
-        title: form.title,
-        thumbnail: thumbnailUrl,
-        video: videoUrl,
-        prompt: form.prompt,
-        creator: form.userId,
-      }
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.orderDesc("$createdAt", Query.limit(7))]
     );
 
-    return newPost;
+    return posts.documents;
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Problems uploading file";
+      error instanceof Error
+        ? error.message
+        : "Problems with getting latets posts";
     throw new Error(errorMessage);
   }
 };

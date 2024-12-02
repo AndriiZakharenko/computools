@@ -8,15 +8,18 @@ import { Redirect, router } from "expo-router";
 
 import CustomButton from "../components/CustomButton";
 import "../styles/global.css";
-// import { useGlobalContext } from "../context/GlobalProvider";
+import { useGlobalContext } from "../context/GlobalProvider";
+import Loader from "../components/Loader";
 
 const App = () => {
-  // const { isLoading, isLoggedIn } = useGlobalContext();
+  const { loading, isLogged } = useGlobalContext();
 
-  // if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
+  if (!loading && isLogged) return <Redirect href="/home" />;
 
   return (
     <SafeAreaView className="bg-primary-black h-full">
+      <Loader isLoading={loading} />
+
       <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="w-full justify-center items-center min-h-[85vh] px-4">
           <Image
@@ -35,14 +38,9 @@ const App = () => {
             <Text className="text-3xl color-secondary-white font-arial-bold text-center">
               Discover Endless Possibilities with{" "}
               <Text className="font-arial_regular color-secondary-yellow">
-                Aora
+                Computools
               </Text>
             </Text>
-            <Image
-              source={images.path}
-              className="w-[136px] h-[15px] absolute -bottom-3 right-28"
-              resizeMode="contain"
-            />
           </View>
 
           <Text className="text-sm font-arial_regular color-secondary-grey mt-7 text-center">
@@ -52,7 +50,7 @@ const App = () => {
 
           <CustomButton
             title="Continue with Email"
-            handlePress={() => router.push("sign-in")}
+            handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
+import { Alert, Dimensions, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../../constans";
@@ -10,14 +10,13 @@ import { createUser } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignUp = () => {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { setUser, setIsLogged } = useGlobalContext();
+  const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
     username: "",
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
@@ -25,13 +24,13 @@ const SignUp = () => {
       return;
     }
 
-    setIsSubmitting(true);
+    setSubmitting(true);
 
     try {
       const result = await createUser(form);
 
       setUser(result);
-      setIsLoggedIn(true);
+      setIsLogged(true);
 
       router.replace("/home");
     } catch (error) {
@@ -41,21 +40,26 @@ const SignUp = () => {
         Alert.alert("Error", "An unknown error occurred");
       }
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
   return (
     <SafeAreaView className="bg-primary-black h-full">
       <ScrollView>
-        <View className="w-full justify-center min-h-[83vh] px-4 my-6">
+        <View
+          className="w-full justify-center min-h-[83vh] px-4 my-6"
+          style={{
+            minHeight: Dimensions.get("window").height - 100,
+          }}
+        >
           <Image
             source={images.logo}
             resizeMode="contain"
             className="w-[115px] h-[35px]"
           />
           <Text className="text-2xl color-secondary-white font-arial_regular mt-10">
-            Sign up to Aora
+            Sign up to Computools
           </Text>
 
           <FormField
@@ -63,7 +67,7 @@ const SignUp = () => {
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
             otherStyles="mt-10"
-            placeholder=""
+            placeholder="name"
           />
 
           <FormField
@@ -72,7 +76,7 @@ const SignUp = () => {
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
             keyboardType="email-address"
-            placeholder=""
+            placeholder="e-mail"
           />
 
           <FormField
@@ -80,7 +84,7 @@ const SignUp = () => {
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
-            placeholder=""
+            placeholder="password"
           />
 
           <CustomButton

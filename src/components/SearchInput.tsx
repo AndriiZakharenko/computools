@@ -5,21 +5,21 @@ import { router, usePathname } from "expo-router";
 
 const SearchInput = ({initialQuery}) => {
   const pathname = usePathname();
-  const [query, setQuery] = useState(initialQuery ||"");
+  const [query, setQuery] = useState(initialQuery || "");
 
   return (
     <View className="border-2 border-yellow-100 w-full h-16 px-4 bg-primary-black rounded-2xl focus:border-secondary-yellow items-center flex-row space-x-4">
       <TextInput
         className="flex-1 color-secondary-white font-arial_regular mt-0.5"
         value={query}
-        placeholder="search for a image..."
+        placeholder="search for a file..."
         placeholderTextColor="#7CDCDE0"
         onChangeText={(e) => setQuery(e)}
       />
 
       <TouchableOpacity
         onPress={() => {
-          if (!query)
+          if (query === "")
             return Alert.alert(
               "Missing querry",
               "Please input something to search results across database"
