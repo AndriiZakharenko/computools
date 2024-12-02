@@ -3,17 +3,21 @@ import React, { useState } from "react";
 import { icons } from "../constans";
 import { router, usePathname } from "expo-router";
 
-const SearchInput = ({initialQuery}) => {
+interface SearchInputProps {
+  initialQuery?: string;
+}
+
+const SearchInput: React.FC<SearchInputProps> = ({ initialQuery = "" }) => {
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
 
   return (
-    <View className="border-2 border-yellow-100 w-full h-16 px-4 bg-primary-black rounded-2xl focus:border-secondary-yellow items-center flex-row space-x-4">
+    <View className="border border-yellow-100 w-full h-16 px-4 bg-primary-black rounded-2xl focus:border-secondary-yellow items-center flex-row space-x-4">
       <TextInput
         className="flex-1 color-secondary-white font-arial_regular mt-0.5"
         value={query}
         placeholder="search for a file..."
-        placeholderTextColor="#7CDCDE0"
+        placeholderTextColor="#555"
         onChangeText={(e) => setQuery(e)}
       />
 

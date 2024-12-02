@@ -1,7 +1,19 @@
 import { Text, View } from "react-native";
 import React from "react";
 
-const InfoBox = ({ title, subtitle, containerStyles, titleStyles }) => {
+interface InfoBoxProps {
+  title: string;
+  subtitle?: string;
+  containerStyles?: string;
+  titleStyles?: string;
+}
+
+const InfoBox: React.FC<InfoBoxProps> = ({
+  title,
+  subtitle,
+  containerStyles = "",
+  titleStyles = "",
+}) => {
   return (
     <View className={containerStyles}>
       <Text
@@ -9,11 +21,13 @@ const InfoBox = ({ title, subtitle, containerStyles, titleStyles }) => {
       >
         {title}
       </Text>
-      <Text
-        className={`text-gray-500 text-center font-arial_regular test-sm ${titleStyles}`}
-      >
-        {subtitle}
-      </Text>
+      {subtitle && (
+        <Text
+          className={`text-gray-500 text-center font-arial_regular test-sm ${titleStyles}`}
+        >
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 };
