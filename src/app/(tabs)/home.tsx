@@ -28,13 +28,7 @@ const Home = () => {
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <VideoCard
-            title={item.title}
-            thumbnail={item.thumbnail}
-            video={item.video}
-            creator={item.creator}
-            avatar={item.creator}
-          />
+          <VideoCard video={item}/>
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
@@ -44,7 +38,7 @@ const Home = () => {
                   Welcome back,
                 </Text>
                 <Text className="test-2xl font-arial_regular color-secondary-white">
-                 Computools
+                  Computools
                 </Text>
               </View>
               <View className="mt-1.5">
