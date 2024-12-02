@@ -49,7 +49,7 @@ const App = () => {
           </Text>
 
           <CustomButton
-            title="Continue with Email"
+            title="Join us"
             handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
           />
