@@ -11,7 +11,9 @@ import { useLocalSearchParams } from "expo-router";
 
 const Search = () => {
   const { query } = useLocalSearchParams();
-  const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
+  const searchQuery = Array.isArray(query) ? query[0] : query;
+
+  const { data: posts, refetch } = useAppwrite(() => searchPosts(searchQuery || ""));
 
   useEffect(() => {
     refetch();
@@ -23,12 +25,7 @@ const Search = () => {
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <VideoCard
-            title={item.title}
-            thumbnail={item.thumbnail}
-            video={item.video}
-            creator={item.creator.username}
-            avatar={item.creator.avatar}
+          <VideoCard video={item}
           />
         )}
         ListHeaderComponent={() => (

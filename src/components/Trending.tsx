@@ -5,6 +5,7 @@ import {
   ImageBackground,
   Text,
   TouchableOpacity,
+  ViewToken
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { icons } from "../constans";
@@ -109,10 +110,10 @@ const Trending: React.FC<TrendingProps> = ({ posts }) => {
   const viewableItemsChanged = ({
     viewableItems,
   }: {
-    viewableItems: { item: Post }[];
+    viewableItems: ViewToken[];
   }) => {
-    if (viewableItems.length > 0 && viewableItems[0]?.item?.$id) {
-      setActiveItem(viewableItems[0].item.$id);
+    if (viewableItems.length > 0) {
+      setActiveItem(viewableItems[0].key);
     }
   };
 

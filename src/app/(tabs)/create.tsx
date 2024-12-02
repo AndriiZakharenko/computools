@@ -12,7 +12,7 @@ import FormField from "../../components/FormField";
 import { ResizeMode, Video } from "expo-av";
 import { icons } from "../../constans";
 import CustomButton from "../../components/CustomButton";
-import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { createVideoPost } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
@@ -35,21 +35,20 @@ const Create = () => {
   });
 
   const openPicker = async (selectType: "image" | "video") => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type:
-        selectType === "image"
-          ? ["image/png", "image/jpg"]
-          : ["video/mp4", "video/gif"],
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: selectType === "image" ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      aspect: [4,3],
+      quality: 1
+      
     });
 
-    if (!result.canceled && "assets" in result) {
-      const asset = result.assets[0];
-      setForm({
-        ...form,
-        [selectType === "image" ? "thumbnail" : "video"]: asset,
-      });
-    } else {
-      Alert.alert("Document picked", JSON.stringify(result, null, 2));
+    if (!result.canceled) {
+      if (selectType === "image") {
+        setForm({ ...form, thumbnail: result.assets[0] });
+      }
+      if (selectType === "video") {
+        setForm({ ...form, video: result.assets[0] });
+      }
     }
   };
 
@@ -68,7 +67,8 @@ const Create = () => {
       Alert.alert("Success", "Post uploaded successfully");
       router.push("/home");
     } catch (error: unknown) {
-      const errorMessage = (error as Error).message || "An unknown error occurred";
+      const errorMessage =
+        (error as Error).message || "An unknown error occurred";
       Alert.alert("Error", errorMessage);
     } finally {
       setForm({
@@ -94,16 +94,14 @@ const Create = () => {
           otherStyles="mt-10"
         />
 
-        <View className="mt-7 space-y-2 " >
+        <View className="mt-7 space-y-2 ">
           <Text className=" color-secondary-grey">Upload file</Text>
           <TouchableOpacity onPress={() => openPicker("video")}>
             {form.video && "uri" in form.video ? (
               <Video
                 source={{ uri: form.video.uri }}
                 className="w-full h-64 rounded-2xl "
-                useNativeControls
                 resizeMode={ResizeMode.COVER}
-                isLooping
               />
             ) : (
               <View className="w-full h-40 px-4 bg-primary-black rounded-2xl justify-center items-center border border-yellow-100">

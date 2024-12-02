@@ -8,6 +8,7 @@ import {
   Storage,
 } from "react-native-appwrite";
 
+
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   platform: "com.test.computools",
@@ -35,6 +36,14 @@ export interface UserDocument {
   email: string;
   username: string;
   avatar: string;
+}
+
+interface VideoPostForm {
+  title: string;
+  thumbnail: File; 
+  video: File;
+  prompt: string;
+  userId: string;
 }
 
 // Register user
@@ -145,7 +154,12 @@ export const uploadFile = async (file, type) => {
   if (!file) return;
 
   const { mimeType, ...rest } = file;
-  const asset = { type: mimeType, ...rest };
+  const asset = {
+    name: file.fileName,
+    type: file.mimeType,
+    size: file.fileSize,
+    uri: file.uri,
+  };
 
   try {
     const uploadedFile = await storage.createFile(
@@ -193,7 +207,7 @@ export const getFilePreview = async (fileId, type) => {
 };
 
 // Create Video Post
-export const createVideoPost = async (form) => {
+export const createVideoPost = async (form: VideoPostForm) => {
   try {
     const [thumbnailUrl, videoUrl] = await Promise.all([
       uploadFile(form.thumbnail, "image"),
@@ -241,14 +255,14 @@ export const getAllPosts = async () => {
 };
 
 // Get video posts created by user
-export const getUserPosts = async (userId) => {
+export const getUserPosts = async (userId: string) => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
       [
         Query.equal("creator", userId),
-        Query.orderDesc("$createdAt", Query.limit(7)),
+        Query.orderDesc("$createdAt"),
       ]
     );
 
@@ -263,7 +277,7 @@ export const getUserPosts = async (userId) => {
 };
 
 // Get video posts that matches search query
-export const searchPosts = async (query) => {
+export const searchPosts = async (query: string) => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,

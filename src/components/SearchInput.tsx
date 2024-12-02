@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { icons } from "../constans";
 import { router, usePathname } from "expo-router";
 
-const SearchInput: React.FC<{ initialQuery?: string }> = ({initialQuery}) => {
+const SearchInput = ({initialQuery}) => {
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
 

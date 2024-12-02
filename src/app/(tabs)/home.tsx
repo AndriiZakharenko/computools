@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -7,7 +7,7 @@ import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
 import useAppwrite from "../../lib/useAppwrite";
-import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
+import { getAllPosts, getLatestPosts, getCurrentUser, UserDocument } from "../../lib/appwrite";
 import VideoCard from "../../components/VideoCard";
 
 const Home = () => {
@@ -15,6 +15,27 @@ const Home = () => {
   const { data: latestPosts } = useAppwrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState<UserDocument | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await getCurrentUser();
+        const user: UserDocument = {
+          accountId: userData.$id,
+          email: userData.email,
+          username: userData.username,
+          avatar: userData.avatar,
+        };
+        setUser(user);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+  
+
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -38,7 +59,7 @@ const Home = () => {
                   Welcome back,
                 </Text>
                 <Text className="test-2xl font-arial_regular color-secondary-white">
-                  Computools
+                {user?.username || "Guest"}
                 </Text>
               </View>
               <View className="mt-1.5">
