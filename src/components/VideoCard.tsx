@@ -19,7 +19,14 @@ type VideoCardProps = {
   video: VideoData | null;
 };
 
-const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
+const VideoCard: React.FC<VideoCardProps> = ({
+  video: {
+    title,
+    thumbnail,
+    video,
+    creator: { username, avatar },
+  },
+}) => {
   const [play, setPlay] = useState(false);
 
   if (!video) {
@@ -30,9 +37,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     );
   }
 
-  const { title = "Untitled", thumbnail, creator } = video;
-  const avatarUri = creator?.avatar || "https://example.com/default-avatar.png";
-  const thumbnailUri = thumbnail || "https://example.com/default-thumbnail.jpg";
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -40,7 +44,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         <View className="justify-center items-center flex-row flex-1">
           <View className="w-[46px] h-[46px] rounded-lg border border-secondary-yellow justify-center items-center p-0.5">
             <Image
-              source={{ uri: avatarUri }}
+              source={{ uri: avatar }}
               className="w-full h-full rounded-lg"
               resizeMode="contain"
             />
@@ -53,7 +57,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               className="text-xs color-secondary-grey font-arial_regular"
               numberOfLines={1}
             >
-              {creator?.username || "Unknown Creator"}
+              {username || "Unknown Creator"}
             </Text>
           </View>
         </View>
@@ -87,7 +91,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
           accessibilityLabel="Play video"
         >
           <Image
-            source={{ uri: thumbnailUri }}
+            source={{ uri: thumbnail }}
             className="w-full h-full rounded-xl mt-3"
             resizeMode="cover"
           />
