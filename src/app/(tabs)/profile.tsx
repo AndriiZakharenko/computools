@@ -11,15 +11,15 @@ import InfoBox from "../../components/InfoBox";
 import { router } from "expo-router";
 
 const Profile = () => {
-  const { user, setUser, setIsLoggedIn } = useGlobalContext();
+  const { user, setUser, setIsLogged } = useGlobalContext();
   const { data: posts } = useAppwrite(() => getUserPosts(user.$id));
 
   const logOut = async () => {
-    await signOut()
-    setUser(null)
-    setIsLoggedIn(false)
+    await signOut();
+    setUser(null);
+    setIsLogged(false);
 
-    router.replace('/sign-in')
+    router.replace("/sign-in");
   };
 
   return (
@@ -27,7 +27,15 @@ const Profile = () => {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <VideoCard video={item} />}
+        renderItem={({ item }) => (
+          <VideoCard
+            title={item.title}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            creator={item.creator.username}
+            avatar={item.creator.avatar}
+          />
+        )}
         ListHeaderComponent={() => (
           <View className="w-full justify-center items-center mt-6 mb-12 px-4">
             <TouchableOpacity
@@ -56,13 +64,12 @@ const Profile = () => {
               <InfoBox
                 title={posts.length || 0}
                 subtitle="Posts"
-                containerStyles="mt-5"
-                titleStyles="text-lg"
+                titleStyles="text-xl"
+                containerStyles="mr-10"
               />
               <InfoBox
-                title="1.5k"
+                title="1.2k"
                 subtitle="Followers"
-                containerStyles="mt-5"
                 titleStyles="text-xl"
               />
             </View>
@@ -70,7 +77,7 @@ const Profile = () => {
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No images Found"
+            title="No Files Found"
             subtitle="No video found for this search"
           />
         )}

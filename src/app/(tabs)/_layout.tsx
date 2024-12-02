@@ -4,6 +4,9 @@ import { Tabs, Redirect } from "expo-router";
 import { ImageSourcePropType } from "react-native";
 
 import { icons } from "../../constans";
+import { useGlobalContext } from "../../context/GlobalProvider";
+import Loader from "../../components/Loader";
+import { StatusBar } from "expo-status-bar";
 
 type TabIconProps = {
   icon: ImageSourcePropType;
@@ -34,12 +37,15 @@ const TabIcon: React.FC<TabIconProps> = ({ icon, color, name, focused }) => {
 };
 
 const TabsLayout = () => {
+
+  const { loading, isLogged } = useGlobalContext();
+  if (!loading && !isLogged) return <Redirect href="/sign-in" />;
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#FFA001",
+          tabBarActiveTintColor: "#cdff33",
           tabBarInactiveTintColor: "#CDCDE0",
           tabBarStyle: {
             backgroundColor: "#161622",
@@ -65,15 +71,15 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="bookmark"
+          name="favourites"
           options={{
-            title: "Bookmark",
+            title: "Favourites",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.bookmark}
                 color={color}
-                name="Bookmark"
+                name="Favourites"
                 focused={focused}
               />
             ),
@@ -110,6 +116,9 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+
+      <Loader isLoading={loading} />
+      <StatusBar backgroundColor="#161622" style="light" />
     </>
   );
 };

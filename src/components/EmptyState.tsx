@@ -25,7 +25,11 @@ const EmptyState: React.FC<EmptyStateProps> = ({ title, subtitle }) => {
         {subtitle}
       </Text>
 
-      <CustomButton title="Upload an image" handlePress={()=> router.push('/create')} containerStyles="w-full my-5"/>
+      <CustomButton
+        title="Back to Explore"
+        handlePress={() => router.push("/home")}
+        containerStyles="w-full my-5"
+      />
     </View>
   );
 };

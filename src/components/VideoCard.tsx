@@ -31,6 +31,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   }
 
   const { title = "Untitled", thumbnail, creator } = video;
+  const avatarUri = creator?.avatar || "https://example.com/default-avatar.png";
+  const thumbnailUri = thumbnail || "https://example.com/default-thumbnail.jpg";
 
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -38,16 +40,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         <View className="justify-center items-center flex-row flex-1">
           <View className="w-[46px] h-[46px] rounded-lg border border-secondary-yellow justify-center items-center p-0.5">
             <Image
-              source={{
-                uri: creator?.avatar || "No avatar",
-              }}
+              source={{ uri: avatarUri }}
               className="w-full h-full rounded-lg"
               resizeMode="contain"
             />
           </View>
           <View className="justify-center flex-1 ml-3 gap-y-1">
             <Text className="text-secondary-white text-sm" numberOfLines={1}>
-              {title || "Untitled"}
+              {title}
             </Text>
             <Text
               className="text-xs color-secondary-grey font-arial_regular"
@@ -63,26 +63,31 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
       </View>
 
       {play ? (
-         <Video
-         source={{ uri: video.video }}
-         className="w-full h-60 rounded-xl mt-3"
-         resizeMode={ResizeMode.CONTAIN}
-         useNativeControls
-         shouldPlay
-         onPlaybackStatusUpdate={(status) => {
-          if (status.isLoaded && 'didJustFinish' in status && status.didJustFinish) {
-            setPlay(false);
-          }
-        }}
-       />
+        <Video
+          source={{ uri: video.video }}
+          className="w-full h-60 rounded-xl mt-3"
+          resizeMode={ResizeMode.CONTAIN}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (
+              status.isLoaded &&
+              "didJustFinish" in status &&
+              status.didJustFinish
+            ) {
+              setPlay(false);
+            }
+          }}
+        />
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
           className="w-full h-60 rounded-xl mt-3 relative justify-center items-center"
+          accessibilityLabel="Play video"
         >
           <Image
-            source={{ uri: thumbnail }}
+            source={{ uri: thumbnailUri }}
             className="w-full h-full rounded-xl mt-3"
             resizeMode="cover"
           />

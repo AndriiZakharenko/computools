@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import React from "react";
 
 const InfoBox = ({ title, subtitle, containerStyles, titleStyles }) => {
@@ -19,5 +19,3 @@ const InfoBox = ({ title, subtitle, containerStyles, titleStyles }) => {
 };
 
 export default InfoBox;
-
-const styles = StyleSheet.create({});

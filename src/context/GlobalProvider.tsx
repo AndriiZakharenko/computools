@@ -12,10 +12,10 @@ interface GlobalProviderProps {
 }
 
 interface GlobalContextType {
-  isLoggedIn: boolean | undefined;
+  isLogged: boolean;
   user: any;
-  isLoading: boolean;
-  setIsLoggedIn: (value: boolean) => void;
+  loading: boolean;
+  setIsLogged: (value: boolean) => void;
   setUser: (value: any) => void;
 }
 
@@ -29,18 +29,18 @@ export const useGlobalContext = (): GlobalContextType => {
 };
 
 const GlobalProvider = ({ children }: GlobalProviderProps) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
+  const [isLogged, setIsLogged] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     getCurrentUser()
       .then((res) => {
         if (res) {
-          setIsLoggedIn(true);
+          setIsLogged(true);
           setUser(res);
         } else {
-          setIsLoggedIn(false);
+          setIsLogged(false);
           setUser(null);
         }
       })
@@ -48,22 +48,23 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
         console.log(error);
       })
       .finally(() => {
-        setIsLoading(false);
+        setLoading(false);
       });
   }, []);
 
   return (
     <GlobalContext.Provider
-    value={{
-        isLoggedIn,
-        setIsLoggedIn,
+      value={{
+        isLogged,
+        setIsLogged,
         user,
         setUser,
-        isLoading
+        loading,
       }}
+    >
       {children}
     </GlobalContext.Provider>
-    )
+  );
 };
 
 export default GlobalProvider;

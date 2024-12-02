@@ -5,10 +5,10 @@ type AsyncFunction<T> = () => Promise<T>;
 
 const useAppwrite = <T>(fn: AsyncFunction<T>) => {
   const [data, setData] = useState<T[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const response = await fn();
       setData(response as T[]);
@@ -19,7 +19,7 @@ const useAppwrite = <T>(fn: AsyncFunction<T>) => {
       );
     }
     finally{
-        setIsLoading(false);
+        setLoading(false);
     }
   };
 
@@ -29,7 +29,7 @@ const useAppwrite = <T>(fn: AsyncFunction<T>) => {
 
   const refetch = () => fetchData();
 
-  return { data, isLoading, refetch };
+  return { data, loading, refetch };
 };
 
 export default useAppwrite;

@@ -18,6 +18,7 @@ const FormField: React.FC<FormFieldProps> = ({
   placeholder = "",
   handleChangeText,
   otherStyles,
+  ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,6 +33,7 @@ const FormField: React.FC<FormFieldProps> = ({
           placeholderTextColor="#7b7b8b"
           onChangeText={handleChangeText}
           secureTextEntry={title === "Password" && !showPassword}
+          {...props}
         />
 
         {title === "Password" && (

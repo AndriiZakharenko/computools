@@ -22,7 +22,15 @@ const Search = () => {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <VideoCard video={item} />}
+        renderItem={({ item }) => (
+          <VideoCard
+            title={item.title}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            creator={item.creator.username}
+            avatar={item.creator.avatar}
+          />
+        )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4">
             <Text className="text-sm color-secondary-grey font-arial_regular">
@@ -32,7 +40,7 @@ const Search = () => {
               {query}
             </Text>
             <View className="mt-6 mb-6">
-              <SearchInput initialQuery={query} />
+            <SearchInput initialQuery={query} refetch={refetch} />
             </View>
           </View>
         )}
