@@ -33,7 +33,7 @@
         setUser(result);
         setIsLogged(true);
 
-        router.replace("/home");
+        router.replace("/profile");
       } catch (error) {
         if (error instanceof Error) {
           Alert.alert("Error", error.message);
