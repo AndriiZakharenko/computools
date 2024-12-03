@@ -19,8 +19,8 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
 type FormState = {
   title: string;
-  video: DocumentPicker.DocumentResult | null;
-  thumbnail: DocumentPicker.DocumentResult | null;
+  video: ImagePicker.ImagePickerAsset | null;
+  thumbnail: ImagePicker.ImagePickerAsset | null;
   prompt: string;
 };
 
@@ -59,11 +59,24 @@ const Create = () => {
 
     setUploading(true);
     try {
-      await createVideoPost({
-        ...form,
-        userId: user.$id,
+      const thumbnailBlob = await (await fetch(form.thumbnail.uri)).blob();
+      const thumbnailFile = new File([thumbnailBlob], form.thumbnail.fileName || "thumbnail.jpg", {
+        type: thumbnailBlob.type,
       });
-
+  
+      const videoBlob = await (await fetch(form.video.uri)).blob();
+      const videoFile = new File([videoBlob], form.video.fileName || "video.mp4", {
+        type: videoBlob.type,
+      });
+  
+      await createVideoPost({
+        userId: user.$id,
+        title: form.title,
+        video: videoFile,
+        thumbnail: thumbnailFile,
+        prompt: form.prompt,
+      });
+  
       Alert.alert("Success", "Post uploaded successfully");
       router.push("/home");
     } catch (error: unknown) {

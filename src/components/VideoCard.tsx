@@ -36,7 +36,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const username = creator?.username || "Unknown Creator";
   const avatar = creator?.avatar || "";
 
-
   return (
     <View className="flex-col items-center px-4 mb-14">
       <View className="flex-row gap-3 items-start">
@@ -82,6 +81,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             }
           }}
         />
+        
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
@@ -102,6 +102,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         </TouchableOpacity>
       )}
     </View>
+    
   );
 };
 
