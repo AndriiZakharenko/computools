@@ -91,7 +91,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         >
           <Image
             source={{ uri: thumbnail }}
-            className="w-full h-full rounded-xl mt-3"
+            className="w-full h-full rounded-xl"
             resizeMode="cover"
           />
           <Image
