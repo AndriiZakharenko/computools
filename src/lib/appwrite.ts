@@ -7,6 +7,9 @@ import {
   Query,
   Storage,
 } from "react-native-appwrite";
+import type { Models } from "react-native-appwrite";
+
+import { ImageGravity } from "react-native-appwrite";
 
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
@@ -184,38 +187,40 @@ export const getFilePreview = async (
   fileId: string,
   type: "video" | "image"
 ): Promise<string> => {
-  let fileUrl: string;
-
   try {
-    if (type === "video") {
-      fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId).href;
-    } else if (type === "image") {
-      fileUrl = storage
-        .getFilePreview(appwriteConfig.storageId, fileId, 2000, 2000, "center", 100)
-        .href;
-    } else {
-      throw new Error("Invalid file type");
-    }
+    const previewUrl =
+      type === "video"
+        ? storage.getFilePreview(appwriteConfig.storageId, fileId).toString()
+        : storage
+            .getFilePreview(
+              appwriteConfig.storageId,
+              fileId,
+              2000,
+              2000,
+              ImageGravity.Top,
+              100
+            )
+            .toString();
 
-    if (!fileUrl) throw new Error("Failed to generate file preview URL");
-
-    return fileUrl;
+    return previewUrl;
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Problems with getting preview";
-    throw new Error(errorMessage);
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : "Problems with getting preview"
+    );
   }
 };
 
 // Create Video Post
-export const createVideoPost = async (form: VideoPostForm) => {
+export const createVideoPost = async (form: VideoPostForm): Promise<Models.Document> => {
   try {
     const [thumbnailUrl, videoUrl] = await Promise.all([
       uploadFile(form.thumbnail, "image"),
       uploadFile(form.video, "video"),
     ]);
 
-    const newPost = await databases.createDocument(
+    return await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.videoCollectionId,
       ID.unique(),
@@ -227,21 +232,22 @@ export const createVideoPost = async (form: VideoPostForm) => {
         creator: form.userId,
       }
     );
-
-    return newPost;
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Problems uploading file";
-    throw new Error(errorMessage);
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : "Problems uploading file"
+    );
   }
 };
+
 
 // Get all video Posts
 export const getAllPosts = async () => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.videoCollectionId,
       [Query.orderDesc("$createdAt")]
     );
 
@@ -260,7 +266,7 @@ export const getUserPosts = async (userId: string) => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.videoCollectionId,
       [Query.equal("creator", userId), Query.orderDesc("$createdAt")]
     );
 
@@ -279,7 +285,7 @@ export const searchPosts = async (query: string) => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.videoCollectionId,
       [Query.search("title", query)]
     );
 
@@ -298,7 +304,7 @@ export const getLatestPosts = async () => {
   try {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
+      appwriteConfig.videoCollectionId,
       [Query.orderDesc("$createdAt"), Query.limit(7)]
     );
 
