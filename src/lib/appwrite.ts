@@ -8,7 +8,6 @@ import {
   Storage,
 } from "react-native-appwrite";
 
-
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   platform: "com.test.computools",
@@ -40,14 +39,18 @@ export interface UserDocument {
 
 interface VideoPostForm {
   title: string;
-  thumbnail: File; 
+  thumbnail: File;
   video: File;
   prompt: string;
   userId: string;
 }
 
 // Register user
-export const createUser = async (email: string, password: string, username: string) => {
+export const createUser = async (
+  email: string,
+  password: string,
+  username: string
+) => {
   try {
     const newAccount = await account.create(
       ID.unique(),
@@ -83,10 +86,7 @@ export const createUser = async (email: string, password: string, username: stri
 };
 
 // Sign In
-export async function signIn (
-  email: string,
-  password: string
-): Promise<Object> {
+export async function signIn(email: string, password: string): Promise<Object> {
   try {
     const activeSession = await account.get();
     console.log("Active session found:", activeSession);
@@ -102,7 +102,7 @@ export async function signIn (
       error instanceof Error ? error.message : "Sign-in failed.";
     throw new Error(errorMessage);
   }
-};
+}
 
 // Get Account
 export async function getAccount() {
@@ -118,10 +118,10 @@ export async function getAccount() {
 }
 
 // Get Current User
-export async function getCurrentUser () {
+export async function getCurrentUser() {
   try {
     const currentAccount = await getAccount();
-    if (!currentAccount) throw new Error;
+    if (!currentAccount) throw new Error();
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -132,10 +132,12 @@ export async function getCurrentUser () {
     return currentUser.documents[0];
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Problems with getting current user";
+      error instanceof Error
+        ? error.message
+        : "Problems with getting current user";
     throw new Error(errorMessage);
   }
-};
+}
 
 // Sign Out
 export const signOut = async () => {
@@ -178,25 +180,24 @@ export const uploadFile = async (file, type) => {
 };
 
 // Get File Preview
-export const getFilePreview = async (fileId, type) => {
-  let fileUrl;
+export const getFilePreview = async (
+  fileId: string,
+  type: "video" | "image"
+): Promise<string> => {
+  let fileUrl: string;
+
   try {
     if (type === "video") {
-      fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId);
+      fileUrl = storage.getFilePreview(appwriteConfig.storageId, fileId).href;
     } else if (type === "image") {
-      fileUrl = storage.getFilePreview(
-        appwriteConfig.storageId,
-        fileId,
-        2000,
-        2000,
-        "top",
-        100
-      );
+      fileUrl = storage
+        .getFilePreview(appwriteConfig.storageId, fileId, 2000, 2000, "center", 100)
+        .href;
     } else {
       throw new Error("Invalid file type");
     }
 
-    if (!fileUrl) throw Error;
+    if (!fileUrl) throw new Error("Failed to generate file preview URL");
 
     return fileUrl;
   } catch (error) {
@@ -260,10 +261,7 @@ export const getUserPosts = async (userId: string) => {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [
-        Query.equal("creator", userId),
-        Query.orderDesc("$createdAt"),
-      ]
+      [Query.equal("creator", userId), Query.orderDesc("$createdAt")]
     );
 
     return posts.documents;

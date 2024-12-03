@@ -58,7 +58,7 @@ const Home = () => {
                 <Text className="text-sm color-secondary-grey font-arial_regular">
                   Welcome back,
                 </Text>
-                <Text className="test-2xl font-arial_regular color-secondary-white">
+                <Text className="test-2xl font-arial_regular color-secondary-yellow">
                 {user?.username || "Guest"}
                 </Text>
               </View>
