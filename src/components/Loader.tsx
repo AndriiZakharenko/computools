@@ -1,6 +1,10 @@
 import { View, ActivityIndicator, Dimensions, Platform } from "react-native";
 
-const Loader = ({ isLoading }) => {
+
+interface LoaderProps {
+  isLoading: boolean;
+}
+const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
   const osName = Platform.OS;
   const screenHeight = Dimensions.get("screen").height;
 
