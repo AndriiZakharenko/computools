@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   FlatList,
   Image,
   ImageBackground,
   Text,
   TouchableOpacity,
-  ViewToken
+  ViewToken,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { icons } from "../constans";
@@ -103,19 +103,22 @@ const Trending: React.FC<TrendingProps> = ({ posts }) => {
     posts.length > 0 ? posts[0].$id : null
   );
 
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 70,
+  }).current;
+
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0) {
+        setActiveItem(viewableItems[0].key);
+      }
+    },
+    []
+  );
+
   if (!posts || posts.length === 0) {
     return <Text>No posts available</Text>;
   }
-
-  const viewableItemsChanged = ({
-    viewableItems,
-  }: {
-    viewableItems: ViewToken[];
-  }) => {
-    if (viewableItems.length > 0) {
-      setActiveItem(viewableItems[0].key);
-    }
-  };
 
   return (
     <FlatList
@@ -125,10 +128,8 @@ const Trending: React.FC<TrendingProps> = ({ posts }) => {
       renderItem={({ item }) => (
         <TrendingItem activeItem={activeItem} item={item} />
       )}
-      onViewableItemsChanged={viewableItemsChanged}
-      viewabilityConfig={{
-        itemVisiblePercentThreshold: 70,
-      }}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={viewabilityConfig}
       contentOffset={{ x: 170, y: 0 }}
     />
   );
