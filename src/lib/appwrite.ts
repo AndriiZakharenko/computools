@@ -11,14 +11,16 @@ import type { Models } from "react-native-appwrite";
 
 import { ImageGravity } from "react-native-appwrite";
 
+import Config from 'react-native-config';
+
 export const appwriteConfig = {
-  endpoint: "https://cloud.appwrite.io/v1",
-  platform: "com.test.computools",
-  projectId: "6749c26000228f3e9aa5",
-  databaseId: "6749c7cb00306f636a37",
-  userCollectionId: "6749c86d0036c1b4d3ec",
-  videoCollectionId: "674cf6de001e41a5598b",
-  storageId: "6749d84e000f6225618e",
+  endpoint: Config.APPWRITE_ENDPOINT,
+  platform: Config.APPWRITE_PLATFORM,
+  projectId: Config.APPWRITE_PROJECT_ID,
+  databaseId: Config.APPWRITE_DATABASE_ID,
+  userCollectionId: Config.APPWRITE_USER_COLLECTION_ID,
+  videoCollectionId: Config.APPWRITE_VIDEO_COLLECTION_ID,
+  storageId: Config.APPWRITE_STORAGE_ID,
 };
 
 const client = new Client();
