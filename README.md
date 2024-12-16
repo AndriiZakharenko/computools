@@ -7,6 +7,7 @@
 - EXPO GO
 - routing
 - useContext
+- Metro
 
 ## Demo Links
 
