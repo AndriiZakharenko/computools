@@ -8,6 +8,7 @@
 
 - React Native
 - CSS (NativeWind)
+- Fetch
 - DB (appwrite)
 - Typescript
 - routing
