@@ -1,13 +1,23 @@
 # Computools
 
+### Description
+
+- Created a mobile App with external API 
+
+### Stack
+
 - React Native
-- NativeWind
+- CSS (NativeWind)
 - DB (appwrite)
 - Typescript
-- EXPO GO
 - routing
 - useContext
+
+### Tools
+
+- Expo Go
 - Metro
+- Babel
 
 ## Demo Links
 
