@@ -6,7 +6,8 @@
 
 ### Stack
 
-- React Native
+- React (18)
+- React Native (0.76)
 - CSS (NativeWind)
 - Fetch
 - DB (appwrite)
