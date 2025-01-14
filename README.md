@@ -6,9 +6,10 @@
 
 ### Stack
 
+- HTML (Atomic)
+- CSS (NativeWind)
 - React (18)
 - React Native (0.76)
-- CSS (NativeWind)
 - Fetch
 - DB (appwrite)
 - Typescript
